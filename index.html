@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KataGo Web Interface</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>KataGo GTP Command Interface</h1>
+    <form id="gtp-form">
+        <label for="gtp-command">Enter GTP Command:</label>
+        <input type="text" id="gtp-command" name="gtp-command" required>
+        <button type="submit">Send Command</button>
+    </form>
+    <h2>Responses:</h2>
+    <pre id="responses"></pre>
+
+    <script>
+        $(document).ready(function() {
+            $('#gtp-form').on('submit', function(event) {
+                event.preventDefault(); // Prevent form submission
+
+                const gtpCommand = $('#gtp-command').val();
+
+                $.ajax({
+                    url: '/predict',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ gtp_command: gtpCommand }),
+                    success: function(data) {
+                        $('#responses').text(data.responses.join('\n'));
+                    },
+                    error: function(xhr) {
+                        $('#responses').text("Error: " + xhr.responseJSON.error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
